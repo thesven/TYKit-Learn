@@ -1,0 +1,38 @@
+{
+  "name": "scalers",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "scalers/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/scalers",
+        "main": "scalers/src/index.ts",
+        "tsConfig": "scalers/tsconfig.lib.json",
+        "assets": ["scalers/*.md"]
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs scalers {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["scalers/**/*.ts", "scalers/package.json"]
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
+      "options": {
+        "passWithNoTests": true,
+        "reportsDirectory": "../coverage/scalers"
+      }
+    }
+  },
+  "tags": []
+}
