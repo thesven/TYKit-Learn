@@ -1,0 +1,38 @@
+{
+  "name": "ensemble",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "ensemble/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/ensemble",
+        "main": "ensemble/src/index.ts",
+        "tsConfig": "ensemble/tsconfig.lib.json",
+        "assets": ["ensemble/*.md"]
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs ensemble {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["ensemble/**/*.ts", "ensemble/package.json"]
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
+      "options": {
+        "passWithNoTests": true,
+        "reportsDirectory": "../coverage/ensemble"
+      }
+    }
+  },
+  "tags": []
+}
