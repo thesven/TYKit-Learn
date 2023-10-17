@@ -33,7 +33,6 @@ export class StandardScaler {
   public fit(data: number[][]): StandardScaler {
     this.mean_ = this.mean(data);
     this.scale_ = this.standardDeviation(data);
-    console.log('[Mean, Scale]', this.mean_, this.scale_);
     return this;
   }
 

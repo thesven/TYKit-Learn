@@ -1,5 +1,8 @@
 import { TreeNode } from './tree-node';
 
+/**
+ * Provides DecisionTreeRegressor options.
+ */
 export interface DecisionTreeOptions {
   maxDepth?: number;
   minSamplesSplit?: number;
@@ -12,6 +15,9 @@ export interface DecisionTreeOptions {
   criterion?: string;
 }
 
+/**
+ * Provides a decision tree Base
+ */
 export class DecisionTree {
   public maxDepth: number;
   public minSamplesSplit: number;
@@ -25,6 +31,10 @@ export class DecisionTree {
 
   protected root: TreeNode | undefined = undefined;
 
+  /**
+   * Creates a new DecisionTreeRegressor.
+   * @param options DecisionTreeRegressor options
+   */
   constructor(options: DecisionTreeOptions = {}) {
     this.maxDepth = options.maxDepth || Infinity;
     this.minSamplesSplit = options.minSamplesSplit || 2;
@@ -37,6 +47,12 @@ export class DecisionTree {
     this.criterion = options.criterion || 'mse';
   }
 
+  /**
+   * Fits the decision tree on a data set
+   * @param {number[][]}X the training data
+   * @param {number[]} y the target values
+   * @returns {void}
+   */
   public fit(X: number[][], y: number[]): void {
     const nSamples = X.length;
     console.log(
@@ -53,6 +69,11 @@ export class DecisionTree {
     this.root = this.buildTree(X, y, featureIndexes, 0);
   }
 
+  /**
+   * Predicts target values for a data set
+   * @param {number[][]} X the data set to predict for
+   * @returns {number[]} the predicted target values
+   */
   public predict(X: number[][]): number[] {
     return X.map((sample) => this.predictSample(sample));
   }
