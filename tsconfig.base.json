@@ -15,9 +15,11 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@tykit-learn/demo": ["demo/src/index.ts"],
       "@tykit-learn/ensemble": ["ensemble/src/index.ts"],
       "@tykit-learn/metrics": ["metrics/src/index.ts"],
-      "@tykit-learn/scalers": ["scalers/src/index.ts"]
+      "@tykit-learn/scalers": ["scalers/src/index.ts"],
+      "@tykit-learn/tree": ["tree/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

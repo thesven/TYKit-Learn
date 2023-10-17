@@ -1,1 +1,1 @@
-export * from './lib/ensemble';
+export * from './lib';

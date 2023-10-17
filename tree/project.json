@@ -1,0 +1,38 @@
+{
+  "name": "tree",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "tree/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/tree",
+        "main": "tree/src/index.ts",
+        "tsConfig": "tree/tsconfig.lib.json",
+        "assets": ["tree/*.md"]
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs tree {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["tree/**/*.ts", "tree/package.json"]
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
+      "options": {
+        "passWithNoTests": true,
+        "reportsDirectory": "../coverage/tree"
+      }
+    }
+  },
+  "tags": []
+}

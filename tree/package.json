@@ -1,10 +1,13 @@
 {
-  "name": "@tykit-learn/ensemble",
+  "name": "@tykit-learn/tree",
   "version": "0.0.1",
   "type": "commonjs",
   "main": "./src/index.js",
   "typings": "./src/index.d.ts",
   "devDependencies": {
     "tslib": "^2.6.2"
+  },
+  "scripts": {
+    "test": "vitest"
   }
 }
