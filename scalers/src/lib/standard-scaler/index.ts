@@ -19,8 +19,8 @@ export interface StandardScalerOptions {
  * @see https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html
  */
 export class StandardScaler {
-  protected mean_: number = 0;
-  protected scale_: number = 1;
+  protected mean_: number[] = [];
+  protected scale_: number[] = [];
 
   public constructor(protected readonly options: StandardScalerOptions) {}
 
@@ -30,9 +30,10 @@ export class StandardScaler {
    * @param data the data to fit the scaler with
    * @returns {StandardScaler} the fitted scaler
    */
-  public fit(data: number[]): StandardScaler {
+  public fit(data: number[][]): StandardScaler {
     this.mean_ = this.mean(data);
     this.scale_ = this.standardDeviation(data);
+    console.log('[Mean, Scale]', this.mean_, this.scale_);
     return this;
   }
 
@@ -40,17 +41,15 @@ export class StandardScaler {
    * @method transform
    * @description Perform standardization by centering and scaling
    * @param data the data to transform
-   * @returns {number[]} the transformed data
+   * @returns {number[][]} the transformed data
    */
-  public transform(data: number[]): number[] {
+  public transform(data: number[][]): number[][] {
     if (this.options.copy) {
-      data = [...data];
+      data = data.map((row) => [...row]);
     }
 
-    return this.standardize(
-      data,
-      this.options.with_mean,
-      this.options.with_std
+    return data.map((row) =>
+      this.standardize(row, this.options.with_mean, this.options.with_std)
     );
   }
 
@@ -58,9 +57,9 @@ export class StandardScaler {
    * @method fitTransform
    * @description Fit to data, then transform it
    * @param data the data to fit and transform
-   * @returns {number[]} the transformed data
+   * @returns {number[][]} the transformed data
    */
-  public fitTransform(data: number[]): number[] {
+  public fitTransform(data: number[][]): number[][] {
     return this.fit(data).transform(data);
   }
 
@@ -68,47 +67,56 @@ export class StandardScaler {
    * @method inverseTransform
    * @description Scale back the data to the original representation
    * @param data the data to inverse transform
-   * @returns {number[]} the inverse transformed data
+   * @returns {number[][]} the inverse transformed data
    */
-  public inverseTransform(data: number[]): number[] {
+  public inverseTransform(data: number[][]): number[][] {
     if (this.options.copy) {
-      data = [...data];
+      data = data.map((row) => [...row]);
     }
 
     let m = this.mean_;
     let s = this.scale_;
 
-    return data.map((x) => x * s + m);
+    return data.map((row) => row.map((x, i) => x * s[i] + m[i]));
   }
 
-  public getMean(): number {
+  public getMean(): number[] {
     return this.mean_;
   }
 
-  public getStdDev(): number {
+  public getStdDev(): number[] {
     return this.scale_;
   }
 
   /**
    * @method mean
    * @param data
-   * @returns number
+   * @returns number[]
    */
-  private mean(data: number[]): number {
-    let sum = data.reduce((acc, val) => acc + val, 0);
-    return sum / data.length;
+  private mean(data: number[][]): number[] {
+    let sums = new Array(data[0].length).fill(0);
+    data.forEach((row) => {
+      row.forEach((val, i) => {
+        sums[i] += val;
+      });
+    });
+    return sums.map((sum) => sum / data.length);
   }
 
   /**
    * @method standardDeviation
    * @param data
-   * @returns number
+   * @returns number[]
    */
-  private standardDeviation(data: number[]): number {
+  private standardDeviation(data: number[][]): number[] {
     let m = this.mean_;
-    let variance =
-      data.reduce((acc, val) => acc + Math.pow(val - m, 2), 0) / data.length;
-    return Math.sqrt(variance);
+    let variances = new Array(data[0].length).fill(0);
+    data.forEach((row) => {
+      row.forEach((val, i) => {
+        variances[i] += Math.pow(val - m[i], 2);
+      });
+    });
+    return variances.map((variance) => Math.sqrt(variance / data.length));
   }
 
   /**
@@ -123,12 +131,12 @@ export class StandardScaler {
     with_mean = true,
     with_std = true
   ): number[] {
-    let m = with_mean ? this.mean_ : 0;
-    let s = with_std ? this.scale_ : 1;
+    let m = with_mean ? this.mean_ : new Array(data.length).fill(0);
+    let s = with_std ? this.scale_ : new Array(data.length).fill(1);
 
-    if (s === 0) {
-      return data.map(() => 0);
+    if (s.some((val) => val === 0)) {
+      return new Array(data.length).fill(0);
     }
-    return data.map((x) => (x - m) / s);
+    return data.map((x, i) => (x - m[i]) / s[i]);
   }
 }
